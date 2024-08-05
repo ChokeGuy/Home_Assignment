@@ -68,12 +68,31 @@ export const TodoList = () => {
     statuses: ['completed', 'pending'],
   })
 
+  const apiContext = api.useContext()
+
+  const { mutate: updateTodoStatus } = api.todoStatus.update.useMutation({
+    onSuccess: () => {
+      apiContext.todo.getAll.refetch()
+    },
+  })
+
   return (
     <ul className="grid grid-cols-1 gap-y-3">
       {todos.map((todo) => (
         <li key={todo.id}>
-          <div className="flex items-center rounded-12 border border-gray-200 px-4 py-3 shadow-sm">
+          <div
+            className={`flex items-center rounded-12 border border-gray-200 px-4 py-3 shadow-sm
+              ${todo.status === 'completed' && 'bg-gray-50'}
+              `}
+          >
             <Checkbox.Root
+              checked={todo.status === 'completed'}
+              onCheckedChange={(isChecked) => {
+                updateTodoStatus({
+                  status: isChecked ? 'completed' : 'pending',
+                  todoId: todo.id,
+                })
+              }}
               id={String(todo.id)}
               className="flex h-6 w-6 items-center justify-center rounded-6 border border-gray-300 focus:border-gray-700 focus:outline-none data-[state=checked]:border-gray-700 data-[state=checked]:bg-gray-700"
             >
@@ -82,7 +101,12 @@ export const TodoList = () => {
               </Checkbox.Indicator>
             </Checkbox.Root>
 
-            <label className="block pl-3 font-medium" htmlFor={String(todo.id)}>
+            <label
+              className={`block pl-3 font-medium
+               ${todo.status === 'completed' && 'text-gray-500 line-through'}
+              `}
+              htmlFor={String(todo.id)}
+            >
               {todo.body}
             </label>
           </div>
