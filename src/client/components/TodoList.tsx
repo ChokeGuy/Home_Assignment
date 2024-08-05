@@ -76,6 +76,12 @@ export const TodoList = () => {
     },
   })
 
+  const { mutate: deleteTodo } = api.todo.delete.useMutation({
+    onSuccess: () => {
+      apiContext.todo.getAll.refetch()
+    },
+  })
+
   return (
     <ul className="grid grid-cols-1 gap-y-3">
       {todos.map((todo) => (
@@ -109,6 +115,17 @@ export const TodoList = () => {
             >
               {todo.body}
             </label>
+            <XMarkIcon
+              role="button"
+              focusable="false"
+              aria-label="Delete todo"
+              className="ml-auto h-6 w-6 cursor-pointer"
+              onClick={() => {
+                deleteTodo({
+                  id: todo.id,
+                })
+              }}
+            />
           </div>
         </li>
       ))}
