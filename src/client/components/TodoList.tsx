@@ -2,6 +2,7 @@ import type { SVGProps } from 'react'
 
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import * as Checkbox from '@radix-ui/react-checkbox'
+import React from 'react'
 
 import { api } from '@/utils/client/api'
 
@@ -64,9 +65,12 @@ import { api } from '@/utils/client/api'
  *  - https://auto-animate.formkit.com
  */
 
-export const TodoList = () => {
+interface TodoListProps {
+  statuses: ('completed' | 'pending')[]
+}
+export const TodoList: React.FC<TodoListProps> = ({ statuses }) => {
   const { data: todos = [] } = api.todo.getAll.useQuery({
-    statuses: ['completed', 'pending'],
+    statuses: statuses,
   })
   const [parent] = useAutoAnimate()
 
